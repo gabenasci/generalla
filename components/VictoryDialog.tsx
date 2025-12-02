@@ -72,14 +72,14 @@ export default function VictoryDialog({ winners, onNewGame, onDismiss }: Victory
           </h2>
 
           {/* Winner name(s) - largest text */}
-          <div className="flex items-center justify-center gap-3 mb-2 md:mb-4">
-            <Swords className="w-8 h-8 text-primary hidden md:block" />
-            <h1 className="text-3xl md:text-6xl font-bold text-primary font-[family-name:var(--font-cinzel)] animate-victory-glow">
+          <div className="flex items-center justify-center gap-2 md:gap-3 mb-2 md:mb-4">
+            <Swords className="w-6 h-6 md:w-8 md:h-8 text-primary hidden sm:block" />
+            <h1 className="text-2xl xs:text-3xl md:text-5xl lg:text-6xl font-bold text-primary font-[family-name:var(--font-cinzel)] animate-victory-glow break-words max-w-[280px] sm:max-w-none">
               {isTie
                 ? winners.map((w) => w.name).join(' & ')
                 : winners[0].name}
             </h1>
-            <Swords className="w-8 h-8 text-primary hidden md:block" />
+            <Swords className="w-6 h-6 md:w-8 md:h-8 text-primary hidden sm:block" />
           </div>
 
           {/* Subtitle */}

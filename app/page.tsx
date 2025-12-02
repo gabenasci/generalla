@@ -73,16 +73,16 @@ export default function Home() {
           {/* Hero Content */}
           <div className="text-center animate-home-entrance">
             {/* Large Decorative Icons with Glow */}
-            <div className="flex items-center justify-center gap-4 md:gap-6 mb-4">
-              <Swords className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 text-primary -rotate-45 icon-glow-left" />
-              <Shield className="w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 text-accent icon-glow-center" />
-              <Swords className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 text-primary rotate-45 icon-glow-right" />
+            <div className="flex items-center justify-center gap-2 xs:gap-3 sm:gap-4 md:gap-6 mb-4">
+              <Swords className="w-8 h-8 xs:w-10 xs:h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 text-primary -rotate-45 icon-glow-left" />
+              <Shield className="w-10 h-10 xs:w-12 xs:h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 text-accent icon-glow-center" />
+              <Swords className="w-8 h-8 xs:w-10 xs:h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 text-primary rotate-45 icon-glow-right" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-primary font-[family-name:var(--font-cinzel)] mb-4 animate-victory-glow">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-primary font-[family-name:var(--font-cinzel)] mb-4 animate-victory-glow">
               Generalla
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-base-content/70 max-w-md mx-auto font-[family-name:var(--font-cinzel)] tracking-wide mb-8">
+            <p className="text-base xs:text-lg sm:text-xl md:text-2xl text-base-content/70 max-w-sm sm:max-w-md mx-auto font-[family-name:var(--font-cinzel)] tracking-wide mb-8">
               Roll the dice, claim your glory, enter Valhalla
             </p>
 
@@ -91,21 +91,21 @@ export default function Home() {
               <div className="flex flex-col gap-4 items-center">
                 {hasExistingGame && (
                   <button
-                    className="btn btn-primary btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow group"
+                    className="btn btn-primary btn-md md:btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow group"
                     onClick={handleContinueGame}
                   >
-                    <Swords className="w-5 h-5 transition-transform group-hover:-rotate-12" />
+                    <Swords className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:-rotate-12" />
                     Continue Battle
-                    <Swords className="w-5 h-5 transition-transform group-hover:rotate-12" />
+                    <Swords className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:rotate-12" />
                   </button>
                 )}
                 <button
-                  className={`btn btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow ${
+                  className={`btn btn-md md:btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow ${
                     hasExistingGame ? 'btn-ghost border-primary/30' : 'btn-primary'
                   }`}
                   onClick={handleNewGame}
                 >
-                  <Shield className="w-5 h-5" />
+                  <Shield className="w-4 h-4 md:w-5 md:h-5" />
                   New Game
                 </button>
               </div>

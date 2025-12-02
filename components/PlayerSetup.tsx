@@ -32,9 +32,9 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
   const canStart = players.length >= 1;
 
   return (
-    <div className="card bg-base-200/80 backdrop-blur-md border-2 border-primary/30 shadow-2xl max-w-md w-full">
-      <div className="card-body">
-        <h2 className="card-title text-primary font-[family-name:var(--font-cinzel)] text-2xl">
+    <div className="card bg-base-200/80 backdrop-blur-md border-2 border-primary/30 shadow-2xl max-w-sm sm:max-w-md w-full">
+      <div className="card-body p-4 sm:p-6">
+        <h2 className="card-title text-primary font-[family-name:var(--font-cinzel)] text-xl sm:text-2xl">
           Assemble Your Warriors
         </h2>
 
@@ -66,7 +66,7 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
                 <div className="flex justify-between items-center">
                   <span className="font-medium">{player}</span>
                   <button
-                    className="btn btn-ghost btn-xs text-error"
+                    className="btn btn-ghost btn-sm text-error"
                     onClick={() => removePlayer(index)}
                   >
                     Remove
@@ -83,9 +83,9 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
           </p>
         )}
 
-        <div className="card-actions justify-end mt-4">
+        <div className="card-actions justify-center sm:justify-end mt-4">
           <button
-            className="btn btn-primary btn-lg font-[family-name:var(--font-cinzel)]"
+            className="btn btn-primary btn-md sm:btn-lg w-full sm:w-auto font-[family-name:var(--font-cinzel)]"
             onClick={() => onStartGame(players)}
             disabled={!canStart}
           >

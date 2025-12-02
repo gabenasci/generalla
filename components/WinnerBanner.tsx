@@ -15,11 +15,11 @@ export default function WinnerBanner({ winners, onNewGame }: WinnerBannerProps) 
 
   return (
     <div className="alert bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary shadow-lg">
-      <div className="flex flex-col items-center w-full text-center gap-2">
-        <h2 className="text-3xl font-bold text-primary font-[family-name:var(--font-cinzel)]">
+      <div className="flex flex-col items-center w-full text-center gap-1 sm:gap-2">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary font-[family-name:var(--font-cinzel)]">
           {isTie ? 'The Battle Ends in a Tie!' : 'Victory!'}
         </h2>
-        <p className="text-xl">
+        <p className="text-base sm:text-lg md:text-xl">
           {isTie ? (
             <>
               <span className="font-bold text-primary">
@@ -37,7 +37,7 @@ export default function WinnerBanner({ winners, onNewGame }: WinnerBannerProps) 
           )}
         </p>
         <button
-          className="btn btn-primary btn-lg mt-4 font-[family-name:var(--font-cinzel)]"
+          className="btn btn-primary btn-md sm:btn-lg mt-2 sm:mt-4 font-[family-name:var(--font-cinzel)]"
           onClick={onNewGame}
         >
           New Battle

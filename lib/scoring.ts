@@ -8,6 +8,7 @@ export type Category = typeof CATEGORIES[number];
 export interface CategoryInfo {
   name: string;
   displayName: string;
+  shortName?: string;  // Optional short name for mobile displays
   validScores: number[];
   maxScore: number;
   hasServido: boolean;
@@ -59,6 +60,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
   escalera: {
     name: 'escalera',
     displayName: 'Escalera',
+    shortName: 'Esc.',
     validScores: [0, 20, 25],
     maxScore: 25,
     hasServido: true,
@@ -80,6 +82,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
   generala: {
     name: 'generala',
     displayName: 'Generala',
+    shortName: 'Gen.',
     validScores: [0, 50],
     maxScore: 50,
     hasServido: false,

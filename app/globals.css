@@ -1,4 +1,10 @@
 @import "tailwindcss";
+
+/* Custom breakpoint for extra-small screens (320px) */
+@theme {
+  --breakpoint-xs: 320px;
+}
+
 @plugin "daisyui" {
   themes: light, dark;
 }
@@ -368,16 +374,31 @@ html, body {
 }
 
 /* ===== MOBILE RESPONSIVENESS ===== */
-@media (max-width: 640px) {
+/* Extra-small screens (320px - 374px) */
+@media (max-width: 374px) {
   .epic-frame {
-    padding: 1.25rem 1.5rem;
-    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .epic-frame::before {
+    inset: -1px;
+  }
+}
+
+/* Small screens (375px - 639px) */
+@media (min-width: 375px) and (max-width: 639px) {
+  .epic-frame {
+    padding: 1rem 1.25rem;
+    border-radius: 0.625rem;
   }
 
   .epic-frame::before {
     inset: -2px;
   }
+}
 
+@media (max-width: 640px) {
   /* Reduce animation intensity for performance */
   .float-drift,
   .float-drift-reverse {
