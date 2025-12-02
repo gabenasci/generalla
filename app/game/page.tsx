@@ -105,7 +105,7 @@ export default function GamePage() {
         />
       )}
 
-      <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full">
+      <main className="flex-1 p-4 md:p-8 w-full md:w-fit max-w-6xl mx-auto">
         <ScoreTable
           players={game.players}
           currentPlayerIndex={game.currentPlayerIndex}

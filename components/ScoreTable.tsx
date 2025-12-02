@@ -40,9 +40,9 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
 
   return (
     <>
-    <div className="flex rounded-lg overflow-hidden bg-base-200">
+    <div className="flex rounded-xl overflow-hidden bg-base-200 shadow-lg border border-base-300/50">
       {/* Fixed Category Column */}
-      <div className="flex-shrink-0 w-20 sm:w-24 bg-base-200 border-r border-base-300">
+      <div className="flex-shrink-0 w-20 sm:w-36 bg-base-200 border-r border-base-300">
         {/* Header */}
         <div className={`${HEADER_HEIGHT} flex items-center justify-center sm:justify-start px-2 sm:px-3 bg-base-300 font-[family-name:var(--font-cinzel)] text-primary text-base sm:text-lg font-semibold`}>
           <Crown size={26} className="sm:hidden" />
@@ -87,11 +87,11 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                 <div
                   key={player.id}
                   data-player-index={index}
-                  className={`min-w-[80px] sm:min-w-[100px] flex items-center justify-center px-2 text-base sm:text-lg font-semibold transition-colors ${
+                  className={`min-w-[80px] sm:min-w-[120px] md:min-w-[140px] flex items-center justify-center px-2 text-base sm:text-lg font-semibold transition-colors ${
                     playerIsWinner
                       ? 'animate-winner-column'
                       : isCurrentPlayer
-                        ? 'bg-primary text-primary-content'
+                        ? 'animate-current-player-header bg-primary text-primary-content'
                         : ''
                   }`}
                 >
@@ -113,20 +113,30 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
               key={category}
               className={`${ROW_HEIGHT} flex ${rowIndex % 2 === 0 ? 'bg-base-200' : 'bg-base-200/50'}`}
             >
-              {players.map((player, index) => (
-                <div
-                  key={player.id}
-                  className="min-w-[80px] sm:min-w-[100px] flex items-center justify-center"
-                >
-                  <ScoreCell
-                    category={category}
-                    score={player.scores[category]}
-                    onSetScore={(score) => onSetScore(player.id, category, score)}
-                    isCurrentPlayer={index === currentPlayerIndex && winners.length === 0}
-                    isWinner={isWinner(player.id)}
-                  />
-                </div>
-              ))}
+              {players.map((player, index) => {
+                const playerIsWinner = isWinner(player.id);
+                const isCurrentPlayer = index === currentPlayerIndex && winners.length === 0;
+                return (
+                  <div
+                    key={player.id}
+                    className={`min-w-[80px] sm:min-w-[120px] md:min-w-[140px] flex items-center justify-center ${
+                      playerIsWinner
+                        ? 'animate-winner-column'
+                        : isCurrentPlayer
+                          ? 'animate-current-player'
+                          : ''
+                    }`}
+                  >
+                    <ScoreCell
+                      category={category}
+                      score={player.scores[category]}
+                      onSetScore={(score) => onSetScore(player.id, category, score)}
+                      isCurrentPlayer={isCurrentPlayer}
+                      isWinner={playerIsWinner}
+                    />
+                  </div>
+                );
+              })}
             </div>
           ))}
 
@@ -138,11 +148,11 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
               return (
                 <div
                   key={player.id}
-                  className={`min-w-[80px] sm:min-w-[100px] flex items-center justify-center text-lg sm:text-xl font-bold transition-colors ${
+                  className={`min-w-[80px] sm:min-w-[120px] md:min-w-[140px] flex items-center justify-center text-lg sm:text-xl font-bold transition-colors ${
                     playerIsWinner
                       ? 'animate-winner-column text-amber-300'
                       : isCurrentPlayer
-                        ? 'bg-primary/30 text-primary'
+                        ? 'animate-current-player-header bg-primary text-primary-content'
                         : 'text-primary'
                   }`}
                 >

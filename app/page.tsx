@@ -6,7 +6,6 @@ import { Swords, Shield, Flame, Axe, Crown, Skull } from 'lucide-react';
 import PlayerSetup from '@/components/PlayerSetup';
 import { createGame } from '@/lib/game-state';
 import { saveGame, loadGame, clearGame } from '@/lib/storage';
-import { VERSION } from '@/lib/version';
 
 export default function Home() {
   const router = useRouter();
@@ -116,9 +115,6 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="absolute bottom-4 text-center text-base-content/40 text-sm z-40">
-        {VERSION}
-      </footer>
     </main>
   );
 }
