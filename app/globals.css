@@ -41,3 +41,256 @@
 html, body {
   min-height: 100vh;
 }
+
+/* Victory Dialog Animations */
+@keyframes victory-glow {
+  0%, 100% {
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5),
+                 0 0 30px rgba(255, 165, 0, 0.3),
+                 0 0 45px rgba(255, 69, 0, 0.15);
+  }
+  50% {
+    text-shadow: 0 0 25px rgba(255, 215, 0, 0.8),
+                 0 0 50px rgba(255, 165, 0, 0.5),
+                 0 0 75px rgba(255, 69, 0, 0.3);
+  }
+}
+
+@keyframes victory-entrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes flame-flicker {
+  0%, 100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 0.8;
+  }
+  25% {
+    transform: scaleY(1.2) scaleX(0.9);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.9) scaleX(1.1);
+    opacity: 0.7;
+  }
+  75% {
+    transform: scaleY(1.1) scaleX(0.95);
+    opacity: 0.9;
+  }
+}
+
+@keyframes winner-header-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.2);
+    background: linear-gradient(90deg, rgba(255, 165, 0, 0.15), rgba(255, 69, 0, 0.15));
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.4);
+    background: linear-gradient(90deg, rgba(255, 165, 0, 0.3), rgba(255, 69, 0, 0.3));
+  }
+}
+
+.animate-victory-glow {
+  animation: victory-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-victory-entrance {
+  animation: victory-entrance 0.5s ease-out forwards;
+}
+
+.animate-winner-header {
+  animation: winner-header-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes flash-attention {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(255, 165, 0, 0);
+    background-color: transparent;
+  }
+  20%, 60% {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 40px rgba(255, 69, 0, 0.4);
+    background-color: rgba(255, 165, 0, 0.3);
+  }
+  40%, 80% {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.4);
+    background-color: rgba(255, 165, 0, 0.15);
+  }
+}
+
+.animate-flash-attention {
+  animation: flash-attention 1.5s ease-in-out;
+}
+
+@keyframes winner-column-pulse {
+  0%, 100% {
+    background: linear-gradient(180deg, rgba(255, 165, 0, 0.12), rgba(255, 69, 0, 0.08));
+    box-shadow: inset 0 0 12px rgba(255, 165, 0, 0.15);
+  }
+  50% {
+    background: linear-gradient(180deg, rgba(255, 165, 0, 0.25), rgba(255, 69, 0, 0.15));
+    box-shadow: inset 0 0 20px rgba(255, 165, 0, 0.3);
+  }
+}
+
+.animate-winner-column {
+  animation: winner-column-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes winner-cell-pulse {
+  0%, 100% {
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.07);
+  }
+}
+
+.animate-winner-cell {
+  animation: winner-cell-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Flames Container */
+.flames-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+
+.flame {
+  position: absolute;
+  bottom: -20px;
+  width: 60px;
+  height: 120px;
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    rgba(255, 69, 0, 0.6) 20%,
+    rgba(255, 140, 0, 0.7) 40%,
+    rgba(255, 200, 0, 0.5) 60%,
+    rgba(255, 220, 100, 0.3) 80%,
+    transparent 100%
+  );
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  filter: blur(8px);
+  animation: flame-flicker 1.2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.flame::before {
+  content: '';
+  position: absolute;
+  bottom: 10%;
+  left: 20%;
+  width: 60%;
+  height: 70%;
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    rgba(255, 100, 0, 0.8) 30%,
+    rgba(255, 180, 0, 0.6) 60%,
+    transparent 100%
+  );
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  filter: blur(4px);
+  animation: flame-flicker 0.8s ease-in-out infinite reverse;
+}
+
+/* Home Page Animations */
+@keyframes home-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-home-entrance {
+  animation: home-entrance 1s ease-out forwards;
+}
+
+/* Ambient Flames - Subtler for home page background */
+@keyframes flame-flicker-slow {
+  0%, 100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 0.5;
+  }
+  25% {
+    transform: scaleY(1.1) scaleX(0.93);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scaleY(0.93) scaleX(1.07);
+    opacity: 0.4;
+  }
+  75% {
+    transform: scaleY(1.07) scaleX(0.96);
+    opacity: 0.6;
+  }
+}
+
+.flames-ambient {
+  height: 30%;
+  opacity: 0.6;
+}
+
+.flame-ambient {
+  width: 50px;
+  height: 100px;
+  filter: blur(12px);
+  animation-name: flame-flicker-slow;
+  animation-duration: 2s;
+}
+
+/* Radial vignette for depth */
+.bg-radial-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+/* Epic button hover glow */
+.btn-epic-glow {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.btn-epic-glow:hover {
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 0.4),
+    0 0 40px rgba(255, 165, 0, 0.2);
+  transform: scale(1.02);
+}
+
+.btn-epic-glow:active {
+  transform: scale(0.98);
+}
+
+/* Mobile flame adjustments */
+@media (max-width: 640px) {
+  .flames-ambient {
+    height: 25%;
+    opacity: 0.5;
+  }
+
+  .flame-ambient {
+    width: 40px;
+    height: 70px;
+  }
+}

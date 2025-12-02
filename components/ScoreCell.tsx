@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Category, CATEGORY_INFO } from '@/lib/scoring';
 
 interface ScoreCellProps {
@@ -9,6 +9,7 @@ interface ScoreCellProps {
   onSetScore: (score: number | null) => void;
   disabled?: boolean;
   isCurrentPlayer?: boolean;
+  isWinner?: boolean;
 }
 
 export default function ScoreCell({
@@ -17,9 +18,26 @@ export default function ScoreCell({
   onSetScore,
   disabled = false,
   isCurrentPlayer = false,
+  isWinner = false,
 }: ScoreCellProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [openUpward, setOpenUpward] = useState(false);
   const info = CATEGORY_INFO[category];
+
+  const handleToggle = (e: React.SyntheticEvent<HTMLDetailsElement>) => {
+    const details = e.currentTarget;
+
+    if (details.open) {
+      const rect = details.getBoundingClientRect();
+      const dropdownMenu = details.querySelector('.dropdown-content');
+      const menuHeight = dropdownMenu?.scrollHeight || 250;
+
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - rect.bottom;
+
+      setOpenUpward(spaceBelow < menuHeight + 20);
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -40,7 +58,7 @@ export default function ScoreCell({
     }
   };
 
-  const cellBg = isCurrentPlayer ? 'bg-base-300' : '';
+  const cellBg = isWinner ? 'animate-winner-cell' : isCurrentPlayer ? 'bg-base-300' : '';
 
   if (disabled) {
     return <td className={`text-center text-base-content/30 ${cellBg}`}>-</td>;
@@ -53,7 +71,7 @@ export default function ScoreCell({
 
   return (
     <td className={`text-center p-1 transition-colors ${cellBg}`}>
-      <details ref={detailsRef} className="dropdown dropdown-end">
+      <details ref={detailsRef} className={`dropdown dropdown-end ${openUpward ? 'dropdown-top' : ''}`} onToggle={handleToggle}>
         <summary className="btn btn-ghost btn-sm w-full list-none cursor-pointer">
           {displayValue}
         </summary>

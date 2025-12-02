@@ -32,7 +32,7 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
   const canStart = players.length >= 1;
 
   return (
-    <div className="card bg-base-200 shadow-xl max-w-md w-full">
+    <div className="card bg-base-200/80 backdrop-blur-md border-2 border-primary/30 shadow-2xl max-w-md w-full">
       <div className="card-body">
         <h2 className="card-title text-primary font-[family-name:var(--font-cinzel)] text-2xl">
           Assemble Your Warriors

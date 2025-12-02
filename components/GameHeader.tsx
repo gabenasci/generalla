@@ -10,6 +10,8 @@ interface GameHeaderProps {
   onNewGame: () => void;
   onUndo: () => void;
   canUndo: boolean;
+  winners?: Player[];
+  flashNewGame?: boolean;
 }
 
 export default function GameHeader({
@@ -19,8 +21,11 @@ export default function GameHeader({
   onNewGame,
   onUndo,
   canUndo,
+  winners = [],
+  flashNewGame = false,
 }: GameHeaderProps) {
   const currentPlayer = players[currentPlayerIndex];
+  const isWinner = isComplete && winners.some(w => w.id === currentPlayer?.id);
 
   return (
     <header className="navbar bg-base-200 shadow-lg px-4 py-3">
@@ -39,7 +44,10 @@ export default function GameHeader({
         >
           <Undo2 size={20} />
         </button>
-        <button className="btn btn-ghost" onClick={onNewGame}>
+        <button
+          className={`btn btn-ghost ${flashNewGame ? 'animate-flash-attention' : ''}`}
+          onClick={onNewGame}
+        >
           New Game
         </button>
 
@@ -48,6 +56,18 @@ export default function GameHeader({
             <Swords size={18} />
             <span className="font-bold text-lg">{currentPlayer.name}</span>
             <Swords size={18} />
+          </div>
+        )}
+
+        {isComplete && winners.length > 0 && (
+          <div className="badge badge-lg gap-2 py-5 px-5 text-lg animate-winner-header rounded-lg">
+            <Swords size={18} className="text-amber-400" />
+            <span className="font-bold text-lg text-amber-200">
+              {winners.length > 1
+                ? winners.map(w => w.name).join(' & ')
+                : winners[0].name}
+            </span>
+            <Swords size={18} className="text-amber-400" />
           </div>
         )}
       </div>

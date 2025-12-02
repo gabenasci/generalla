@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import GameHeader from '@/components/GameHeader';
 import ScoreTable from '@/components/ScoreTable';
-import WinnerBanner from '@/components/WinnerBanner';
+import VictoryDialog from '@/components/VictoryDialog';
 import { GameState, setScore, getWinners } from '@/lib/game-state';
 import { Category } from '@/lib/scoring';
 import { loadGame, saveGame, clearGame } from '@/lib/storage';
@@ -14,6 +14,8 @@ export default function GamePage() {
   const [game, setGame] = useState<GameState | null>(null);
   const [previousGame, setPreviousGame] = useState<GameState | null>(null);
   const [loading, setLoading] = useState(true);
+  const [flashNewGame, setFlashNewGame] = useState(false);
+  const [showVictoryDialog, setShowVictoryDialog] = useState(true);
 
   useEffect(() => {
     const savedGame = loadGame();
@@ -48,6 +50,11 @@ export default function GamePage() {
 
     setGame(updatedGame);
     saveGame(updatedGame);
+
+    // Show victory dialog when game completes
+    if (updatedGame.isComplete && !game.isComplete) {
+      setShowVictoryDialog(true);
+    }
   };
 
   const handleNewGame = () => {
@@ -60,6 +67,10 @@ export default function GamePage() {
     setGame(previousGame);
     saveGame(previousGame);
     setPreviousGame(null);
+  };
+
+  const handleDismissVictory = () => {
+    setShowVictoryDialog(false);
   };
 
   if (loading || !game) {
@@ -81,19 +92,25 @@ export default function GamePage() {
         onNewGame={handleNewGame}
         onUndo={handleUndo}
         canUndo={previousGame !== null}
+        winners={winners}
+        flashNewGame={flashNewGame}
       />
 
-      <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full">
-        {game.isComplete && winners.length > 0 && (
-          <div className="mb-6">
-            <WinnerBanner winners={winners} onNewGame={handleNewGame} />
-          </div>
-        )}
+      {/* Victory Dialog - fixed overlay */}
+      {game.isComplete && winners.length > 0 && showVictoryDialog && (
+        <VictoryDialog
+          winners={winners}
+          onNewGame={handleNewGame}
+          onDismiss={handleDismissVictory}
+        />
+      )}
 
+      <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full">
         <ScoreTable
           players={game.players}
           currentPlayerIndex={game.currentPlayerIndex}
           onSetScore={handleSetScore}
+          winners={winners}
         />
       </main>
     </div>
