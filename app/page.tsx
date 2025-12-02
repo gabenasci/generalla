@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Swords, Shield } from 'lucide-react';
+import { Swords, Shield, Flame, Axe, Crown, Skull } from 'lucide-react';
 import PlayerSetup from '@/components/PlayerSetup';
 import { createGame } from '@/lib/game-state';
 import { saveGame, loadGame, clearGame } from '@/lib/storage';
@@ -36,8 +36,18 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-base-100 relative overflow-hidden">
-      {/* Background Flames */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Layer 1: Large Background Decorative Icons */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <Shield className="absolute top-[10%] left-[5%] w-20 h-20 md:w-32 md:h-32 text-primary/[0.15] float-drift" />
+        <Swords className="absolute top-[15%] right-[8%] w-16 h-16 md:w-28 md:h-28 text-primary/[0.12] float-drift-reverse rotate-45" />
+        <Axe className="absolute top-[45%] left-[3%] w-14 h-14 md:w-24 md:h-24 text-accent/[0.10] float-drift hidden md:block" />
+        <Crown className="absolute top-[40%] right-[5%] w-12 h-12 md:w-20 md:h-20 text-primary/[0.08] slow-spin hidden md:block" />
+        <Skull className="absolute bottom-[25%] left-[8%] w-16 h-16 md:w-24 md:h-24 text-accent/[0.12] pulse-subtle" />
+        <Shield className="absolute bottom-[20%] right-[5%] w-20 h-20 md:w-28 md:h-28 text-primary/[0.15] float-drift-reverse" />
+      </div>
+
+      {/* Layer 2: Background Flames */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[5]">
         <div className="flames-container flames-ambient">
           {[...Array(15)].map((_, i) => (
             <div
@@ -53,61 +63,60 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Radial Vignette Overlay */}
-      <div className="absolute inset-0 bg-radial-vignette pointer-events-none" />
+      {/* Layer 3: Radial Vignette Overlay */}
+      <div className="absolute inset-0 bg-radial-vignette pointer-events-none z-10" />
 
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Hero Section */}
-        <div className="text-center mb-8 animate-home-entrance">
-          {/* Decorative Icons */}
-          <div className="flex items-center justify-center gap-3 md:gap-4 mb-4">
-            <Swords className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-primary/60 -rotate-45" />
-            <Shield className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-accent" />
-            <Swords className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-primary/60 rotate-45" />
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-primary font-[family-name:var(--font-cinzel)] mb-4 animate-victory-glow">
-            Generalla
-          </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-base-content/70 max-w-md mx-auto font-[family-name:var(--font-cinzel)] tracking-wide">
-            Roll the dice, claim your glory, enter Valhalla
-          </p>
-        </div>
-
-        {/* Content Area */}
-        {!showSetup ? (
-          <div className="bg-base-200/60 backdrop-blur-sm rounded-2xl border border-primary/30 p-6 md:p-8 shadow-2xl animate-victory-entrance">
-            <div className="flex flex-col gap-4 items-center">
-              {hasExistingGame && (
-                <button
-                  className="btn btn-primary btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow group"
-                  onClick={handleContinueGame}
-                >
-                  <Swords className="w-5 h-5 transition-transform group-hover:-rotate-12" />
-                  Continue Battle
-                  <Swords className="w-5 h-5 transition-transform group-hover:rotate-12" />
-                </button>
-              )}
-              <button
-                className={`btn btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow ${
-                  hasExistingGame ? 'btn-ghost border-primary/30' : 'btn-primary'
-                }`}
-                onClick={handleNewGame}
-              >
-                <Shield className="w-5 h-5" />
-                New Game
-              </button>
+      {/* Layer 4: Main Content */}
+      <div className="relative z-20 flex flex-col items-center">
+        {/* Epic Frame wrapping everything */}
+        <div className="epic-frame animate-victory-entrance">
+          {/* Hero Content */}
+          <div className="text-center animate-home-entrance">
+            {/* Large Decorative Icons with Glow */}
+            <div className="flex items-center justify-center gap-4 md:gap-6 mb-4">
+              <Swords className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 text-primary -rotate-45 icon-glow-left" />
+              <Shield className="w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 text-accent icon-glow-center" />
+              <Swords className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 text-primary rotate-45 icon-glow-right" />
             </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-primary font-[family-name:var(--font-cinzel)] mb-4 animate-victory-glow">
+              Generalla
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl text-base-content/70 max-w-md mx-auto font-[family-name:var(--font-cinzel)] tracking-wide mb-8">
+              Roll the dice, claim your glory, enter Valhalla
+            </p>
+
+            {/* Buttons / Setup inside the frame */}
+            {!showSetup ? (
+              <div className="flex flex-col gap-4 items-center">
+                {hasExistingGame && (
+                  <button
+                    className="btn btn-primary btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow group"
+                    onClick={handleContinueGame}
+                  >
+                    <Swords className="w-5 h-5 transition-transform group-hover:-rotate-12" />
+                    Continue Battle
+                    <Swords className="w-5 h-5 transition-transform group-hover:rotate-12" />
+                  </button>
+                )}
+                <button
+                  className={`btn btn-lg w-full sm:w-auto gap-2 font-[family-name:var(--font-cinzel)] btn-epic-glow ${
+                    hasExistingGame ? 'btn-ghost border-primary/30' : 'btn-primary'
+                  }`}
+                  onClick={handleNewGame}
+                >
+                  <Shield className="w-5 h-5" />
+                  New Game
+                </button>
+              </div>
+            ) : (
+              <PlayerSetup onStartGame={handleStartGame} />
+            )}
           </div>
-        ) : (
-          <div className="animate-victory-entrance">
-            <PlayerSetup onStartGame={handleStartGame} />
-          </div>
-        )}
+        </div>
       </div>
 
-      <footer className="absolute bottom-4 text-center text-base-content/40 text-sm z-10">
+      <footer className="absolute bottom-4 text-center text-base-content/40 text-sm z-40">
         {VERSION}
       </footer>
     </main>
