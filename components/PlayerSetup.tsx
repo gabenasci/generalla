@@ -34,7 +34,7 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
   return (
     <div className="card bg-base-200/80 backdrop-blur-md border-2 border-primary/30 shadow-2xl max-w-md sm:max-w-lg w-full mx-auto">
       <div className="card-body p-4 sm:p-6">
-        <h2 className="card-title text-primary font-[family-name:var(--font-cinzel)] text-xl sm:text-2xl">
+        <h2 className="card-title text-primary font-[family-name:var(--font-cinzel)] text-xl sm:text-2xl justify-center">
           Assemble Your Warriors
         </h2>
 
