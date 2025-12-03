@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" data-theme="valhalla">
       <body className={`${cinzel.variable} ${inter.variable} font-sans antialiased min-h-screen bg-base-100`}>
         {children}
-        <footer className="fixed bottom-2 right-2 text-base-content/40 text-xs z-10 pointer-events-none">
+        <footer className="fixed bottom-2 right-2 text-base-content/50 text-xs sm:text-sm z-10 pointer-events-none">
           {VERSION}
         </footer>
       </body>
