@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Player, getPlayerTotal } from '@/lib/game-state';
 import { Category, CATEGORIES, CATEGORY_INFO } from '@/lib/scoring';
 import ScoreCell from './ScoreCell';
+import CategoryCell from './CategoryCell';
 import { Swords } from 'lucide-react';
 import DiceIcon from './DiceIcon';
 
@@ -28,6 +29,39 @@ const FOOTER_HEIGHT = 'h-[52px] sm:h-[60px]';
 export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell }: ScoreTableProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isWinner = (playerId: string) => winners.some(w => w.id === playerId);
+
+  // State for showing category example hands
+  const [activeExampleCategory, setActiveExampleCategory] = useState<Category | null>(null);
+
+  // Click-outside detection to dismiss example
+  useEffect(() => {
+    if (!activeExampleCategory) return;
+
+    const handleClickOutside = () => {
+      setActiveExampleCategory(null);
+    };
+
+    // Small delay to avoid immediate close on same click
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeExampleCategory]);
+
+  // Auto-dismiss timer (5 seconds)
+  useEffect(() => {
+    if (!activeExampleCategory) return;
+
+    const timeoutId = setTimeout(() => {
+      setActiveExampleCategory(null);
+    }, 5000);
+
+    return () => clearTimeout(timeoutId);
+  }, [activeExampleCategory]);
 
   // Auto-scroll to current player when they change
   useEffect(() => {
@@ -74,13 +108,11 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
               index % 2 === 0 ? 'bg-base-200' : 'bg-base-200/50'
             }`}
           >
-            <span className="hidden sm:inline">
-              {category === 'generala' ? 'Generalla' : CATEGORY_INFO[category].displayName}
-            </span>
-            <span className="sm:hidden">{CATEGORY_INFO[category].shortName || CATEGORY_INFO[category].displayName}</span>
-            {CATEGORY_INFO[category].hasServido && (
-              <span className="text-xs sm:text-sm text-base-content/50 ml-0.5 sm:ml-1">*</span>
-            )}
+            <CategoryCell
+              category={category}
+              isShowingExample={activeExampleCategory === category}
+              onShowExample={() => setActiveExampleCategory(category)}
+            />
           </div>
         ))}
 

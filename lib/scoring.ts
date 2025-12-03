@@ -5,6 +5,8 @@ export const CATEGORIES = [
 
 export type Category = typeof CATEGORIES[number];
 
+export type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+
 export interface CategoryInfo {
   name: string;
   displayName: string;
@@ -12,6 +14,7 @@ export interface CategoryInfo {
   validScores: number[];
   maxScore: number;
   hasServido: boolean;
+  exampleHand: [DiceValue, DiceValue, DiceValue, DiceValue, DiceValue];
 }
 
 export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
@@ -21,6 +24,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 1, 2, 3, 4, 5],
     maxScore: 5,
     hasServido: false,
+    exampleHand: [1, 1, 1, 1, 1],
   },
   twos: {
     name: 'twos',
@@ -28,6 +32,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 2, 4, 6, 8, 10],
     maxScore: 10,
     hasServido: false,
+    exampleHand: [2, 2, 2, 2, 2],
   },
   threes: {
     name: 'threes',
@@ -35,6 +40,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 3, 6, 9, 12, 15],
     maxScore: 15,
     hasServido: false,
+    exampleHand: [3, 3, 3, 3, 3],
   },
   fours: {
     name: 'fours',
@@ -42,6 +48,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 4, 8, 12, 16, 20],
     maxScore: 20,
     hasServido: false,
+    exampleHand: [4, 4, 4, 4, 4],
   },
   fives: {
     name: 'fives',
@@ -49,6 +56,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 5, 10, 15, 20, 25],
     maxScore: 25,
     hasServido: false,
+    exampleHand: [5, 5, 5, 5, 5],
   },
   sixes: {
     name: 'sixes',
@@ -56,6 +64,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 6, 12, 18, 24, 30],
     maxScore: 30,
     hasServido: false,
+    exampleHand: [6, 6, 6, 6, 6],
   },
   escalera: {
     name: 'escalera',
@@ -64,6 +73,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 20, 25],
     maxScore: 25,
     hasServido: true,
+    exampleHand: [1, 2, 3, 4, 5],
   },
   full: {
     name: 'full',
@@ -71,6 +81,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 30, 35],
     maxScore: 35,
     hasServido: true,
+    exampleHand: [3, 3, 3, 2, 2],
   },
   poker: {
     name: 'poker',
@@ -78,6 +89,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 40, 45],
     maxScore: 45,
     hasServido: true,
+    exampleHand: [4, 4, 4, 4, 2],
   },
   generala: {
     name: 'generala',
@@ -86,6 +98,7 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     validScores: [0, 50],
     maxScore: 50,
     hasServido: false,
+    exampleHand: [5, 5, 5, 5, 5],
   },
 };
 
