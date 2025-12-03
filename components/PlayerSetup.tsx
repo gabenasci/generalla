@@ -60,21 +60,23 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
         </div>
 
         {players.length > 0 && (
-          <ul className="menu bg-base-300 rounded-box mt-4">
+          <div className="flex flex-wrap gap-2 bg-base-300 rounded-box p-3 mt-4">
             {players.map((player, index) => (
-              <li key={index}>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{player}</span>
-                  <button
-                    className="btn btn-ghost btn-sm text-error"
-                    onClick={() => removePlayer(index)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </li>
+              <div
+                key={index}
+                className="badge badge-lg gap-2 bg-primary text-primary-content font-medium py-3 px-4"
+              >
+                <span>{player}</span>
+                <button
+                  className="hover:text-error transition-colors"
+                  onClick={() => removePlayer(index)}
+                  aria-label={`Remove ${player}`}
+                >
+                  ✕
+                </button>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
 
         {players.length === 0 && (
