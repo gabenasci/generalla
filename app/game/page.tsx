@@ -7,6 +7,11 @@ import ScoreTable from '@/components/ScoreTable';
 import VictoryDialog from '@/components/VictoryDialog';
 import { GameState, setScore, getWinners } from '@/lib/game-state';
 import { Category } from '@/lib/scoring';
+
+interface CelebratingCell {
+  playerId: string;
+  category: Category;
+}
 import { loadGame, saveGame, clearGame } from '@/lib/storage';
 
 export default function GamePage() {
@@ -16,9 +21,30 @@ export default function GamePage() {
   const [loading, setLoading] = useState(true);
   const [flashNewGame, setFlashNewGame] = useState(false);
   const [showVictoryDialog, setShowVictoryDialog] = useState(true);
+  const [celebratingCell, setCelebratingCell] = useState<CelebratingCell | null>(null);
 
   useEffect(() => {
-    const savedGame = loadGame();
+    let savedGame = loadGame();
+
+    // Dev mode: add more mock players if URL param is set
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('dev-6players')) {
+      if (savedGame && savedGame.players.length < 6) {
+        const mockNames = ['Soren', 'Freya', 'Bjorn', 'Astrid the Mighty Warrior King of the North', 'Saga'];
+        const newPlayers = savedGame.players;
+        while (newPlayers.length < 6) {
+          const player = mockNames[newPlayers.length - 1];
+          if (player) {
+            newPlayers.push({
+              id: `mock-${player}`,
+              name: player,
+              scores: savedGame.players[0].scores
+            });
+          }
+        }
+        savedGame = { ...savedGame, players: newPlayers };
+      }
+    }
+
     if (!savedGame) {
       router.push('/');
       return;
@@ -33,27 +59,40 @@ export default function GamePage() {
     // Only track undo for score sets (not resets)
     if (score !== null) {
       setPreviousGame(game);
+      // Start celebration animation
+      setCelebratingCell({ playerId, category });
     }
 
     // Find the index of the player who just scored
     const scorerIndex = game.players.findIndex(p => p.id === playerId);
 
-    let updatedGame = setScore(game, playerId, category, score);
+    const updatedGame = setScore(game, playerId, category, score);
 
-    // Only advance player when setting a score (not when resetting)
-    // Set next player based on WHO scored, not current turn
-    // Handles: wrap-around, edits, single player (stays at 0)
-    if (score !== null && !updatedGame.isComplete) {
-      const nextPlayerIndex = (scorerIndex + 1) % game.players.length;
-      updatedGame = { ...updatedGame, currentPlayerIndex: nextPlayerIndex };
-    }
-
+    // Update score immediately (player sees their score right away)
     setGame(updatedGame);
     saveGame(updatedGame);
 
     // Show victory dialog when game completes
     if (updatedGame.isComplete && !game.isComplete) {
       setShowVictoryDialog(true);
+    }
+
+    // Advance player after delay (only for score sets, not resets)
+    // This gives the scoring player time to see their score before turn switches
+    if (score !== null && !updatedGame.isComplete) {
+      setTimeout(() => {
+        setCelebratingCell(null); // End celebration
+        setGame(currentGame => {
+          // Verify game state hasn't changed (e.g., undo wasn't pressed)
+          if (currentGame === updatedGame) {
+            const nextPlayerIndex = (scorerIndex + 1) % game.players.length;
+            const advancedGame = { ...currentGame, currentPlayerIndex: nextPlayerIndex };
+            saveGame(advancedGame);
+            return advancedGame;
+          }
+          return currentGame;
+        });
+      }, 2000);
     }
   };
 
@@ -84,17 +123,37 @@ export default function GamePage() {
   const winners = getWinners(game);
 
   return (
-    <div className="min-h-screen flex flex-col bg-base-100">
-      <GameHeader
-        players={game.players}
-        currentPlayerIndex={game.currentPlayerIndex}
-        isComplete={game.isComplete}
-        onNewGame={handleNewGame}
-        onUndo={handleUndo}
-        canUndo={previousGame !== null}
-        winners={winners}
-        flashNewGame={flashNewGame}
-      />
+    <div className="min-h-screen flex flex-col bg-base-100 relative overflow-hidden">
+      {/* Background Flames */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="flames-container flames-ambient">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="flame flame-ambient"
+              style={{
+                left: `${i * 6.67}%`,
+                animationDelay: `${i * 0.15}s`,
+                animationDuration: `${1.8 + Math.random() * 0.6}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="relative z-10">
+        <GameHeader
+          players={game.players}
+          currentPlayerIndex={game.currentPlayerIndex}
+          isComplete={game.isComplete}
+          onNewGame={handleNewGame}
+          onUndo={handleUndo}
+          canUndo={previousGame !== null}
+          winners={winners}
+          flashNewGame={flashNewGame}
+          celebratingPlayerId={celebratingCell?.playerId}
+        />
+      </div>
 
       {/* Victory Dialog - fixed overlay */}
       {game.isComplete && winners.length > 0 && showVictoryDialog && (
@@ -105,12 +164,13 @@ export default function GamePage() {
         />
       )}
 
-      <main className="flex-1 p-4 md:p-8 w-full md:w-fit max-w-6xl mx-auto">
+      <main className="flex-1 p-4 md:p-8 w-full md:w-fit max-w-6xl mx-auto relative z-10">
         <ScoreTable
           players={game.players}
           currentPlayerIndex={game.currentPlayerIndex}
           onSetScore={handleSetScore}
           winners={winners}
+          celebratingCell={celebratingCell}
         />
       </main>
     </div>

@@ -10,6 +10,7 @@ interface ScoreCellProps {
   disabled?: boolean;
   isCurrentPlayer?: boolean;
   isWinner?: boolean;
+  isCelebrating?: boolean;
 }
 
 interface DropdownPosition {
@@ -26,6 +27,7 @@ export default function ScoreCell({
   disabled = false,
   isCurrentPlayer = false,
   isWinner = false,
+  isCelebrating = false,
 }: ScoreCellProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLUListElement>(null);
@@ -100,7 +102,13 @@ export default function ScoreCell({
     return () => window.removeEventListener('scroll', handleScroll, true);
   }, [isOpen]);
 
-  const cellBg = isWinner ? 'animate-winner-cell' : isCurrentPlayer ? 'bg-base-300' : '';
+  const cellBg = isCelebrating
+    ? 'animate-score-triumph'
+    : isWinner
+      ? 'animate-winner-cell'
+      : isCurrentPlayer
+        ? 'bg-base-300'
+        : '';
 
   if (disabled) {
     return <div className={`text-center text-base-content/30 ${cellBg}`}>-</div>;
@@ -108,7 +116,9 @@ export default function ScoreCell({
 
   const hasScore = score !== null;
   const displayValue = hasScore
-    ? (score === 0 ? <span className="text-error line-through opacity-60 text-lg">0</span> : <span className="text-success font-bold text-lg">{score}</span>)
+    ? (score === 0
+        ? <span className="text-error line-through opacity-60 text-lg">0</span>
+        : <span className={`font-bold text-lg ${isCelebrating ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-success'}`}>{score}</span>)
     : <span className="text-primary text-xl">+</span>;
 
   return (

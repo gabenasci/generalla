@@ -1,7 +1,7 @@
 'use client';
 
 import { Player, getPlayerTotal } from '@/lib/game-state';
-import { Swords, Undo2, Flame } from 'lucide-react';
+import { Swords, Undo2 } from 'lucide-react';
 
 interface GameHeaderProps {
   players: Player[];
@@ -12,6 +12,7 @@ interface GameHeaderProps {
   canUndo: boolean;
   winners?: Player[];
   flashNewGame?: boolean;
+  celebratingPlayerId?: string;
 }
 
 export default function GameHeader({
@@ -23,77 +24,56 @@ export default function GameHeader({
   canUndo,
   winners = [],
   flashNewGame = false,
+  celebratingPlayerId,
 }: GameHeaderProps) {
-  const currentPlayer = players[currentPlayerIndex];
 
-  // Desktop: Beautiful enhanced badge with separator
-  const renderDesktopBadge = () => {
-    if (!currentPlayer) return null;
-    const playerTotal = getPlayerTotal(currentPlayer);
-
-    return (
-      <div className="hidden sm:flex items-center gap-3 bg-gradient-to-r from-primary to-primary/90 text-primary-content rounded-xl px-5 py-3 shadow-[0_0_20px_rgba(255,215,0,0.35)] order-3 sm:order-none">
-        {/* Player section */}
-        <div className="flex items-center gap-2">
-          <Swords size={18} className="drop-shadow-[0_0_4px_rgba(255,255,255,0.5)]" />
-          <span className="font-bold text-lg truncate max-w-[150px]">{currentPlayer.name}</span>
-        </div>
-
-        {/* Glowing separator */}
-        <span className="w-px h-6 bg-gradient-to-b from-transparent via-amber-200/70 to-transparent shadow-[0_0_8px_rgba(255,215,0,0.6)]" />
-
-        {/* Score section */}
-        <div className="flex items-center gap-1.5">
-          <Flame size={16} className="text-amber-300 drop-shadow-[0_0_6px_rgba(255,191,0,0.8)]" />
-          <span className="font-bold text-xl font-[family-name:var(--font-cinzel)] drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
-            {playerTotal}
-          </span>
-        </div>
-      </div>
-    );
-  };
-
-  // Mobile: Compact scoreboard showing all players
+  // Mobile: Shield scoreboard (name + score for each player)
   const renderMobileScoreboard = () => {
     return (
-    <div className="sm:hidden w-full order-3">
-      <div className="flex flex-wrap justify-center gap-1.5">
-        {players.map((player, index) => {
-          const isCurrentTurn = index === currentPlayerIndex;
-          const total = getPlayerTotal(player);
+      <div className="sm:hidden w-full order-3">
+        <div className="flex flex-wrap justify-center gap-2 py-2">
+          {players.map((player, index) => {
+            const isCurrentTurn = index === currentPlayerIndex && winners.length === 0;
+            const isCelebrating = player.id === celebratingPlayerId;
+            const total = getPlayerTotal(player);
 
-          return (
-            <div
-              key={player.id}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all
-                ${isCurrentTurn
-                  ? 'bg-gradient-to-r from-primary to-primary/90 text-primary-content shadow-[0_0_12px_rgba(255,215,0,0.4)]'
-                  : 'bg-base-300/50 text-base-content/80'
+            return (
+              <div
+                key={player.id}
+                className={`shield ${
+                  isCelebrating
+                    ? 'shield-active shield-celebrating'
+                    : isCurrentTurn
+                      ? 'shield-active'
+                      : 'shield-inactive'
                 }`}
-            >
-              {isCurrentTurn && (
-                <Swords size={12} className="flex-shrink-0 drop-shadow-[0_0_3px_rgba(255,255,255,0.5)]" />
-              )}
-              <span className={`font-medium truncate max-w-[70px] ${isCurrentTurn ? '' : 'opacity-80'}`}>
-                {player.name}
-              </span>
-              <span className={`font-bold font-[family-name:var(--font-cinzel)] ${
-                isCurrentTurn
-                  ? 'drop-shadow-[0_0_4px_rgba(255,255,255,0.3)]'
-                  : 'text-primary'
-              }`}>
-                {total}
-              </span>
-            </div>
-          );
-        })}
+              >
+                {/* Player name - TOP */}
+                <span className="shield-name font-[family-name:var(--font-cinzel)]">
+                  {player.name}
+                </span>
+
+                {/* Player score - MIDDLE */}
+                <span className="shield-score font-[family-name:var(--font-cinzel)]">
+                  {total}
+                </span>
+
+                {/* Sword icon - BOTTOM (only for current player) */}
+                <div className="shield-icon flex items-center justify-center">
+                  {isCurrentTurn && (
+                    <Swords size={14} />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
     );
   };
 
   return (
-    <header className="navbar bg-base-200 shadow-lg px-2 sm:px-4 py-2 sm:py-3 flex-wrap sm:flex-nowrap gap-2">
+    <header className="navbar bg-base-200 shadow-lg px-2 sm:px-4 py-2 sm:py-3 flex-wrap gap-2">
       <div className="flex-1 min-w-0">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary font-[family-name:var(--font-cinzel)]">
           Generalla
@@ -118,15 +98,10 @@ export default function GameHeader({
         </button>
       </div>
 
-      {/* Current player display - responsive */}
-      {!isComplete && currentPlayer && (
-        <>
-          {renderDesktopBadge()}
-          {renderMobileScoreboard()}
-        </>
-      )}
+      {/* Mobile: Shield scoreboard above table */}
+      {!isComplete && renderMobileScoreboard()}
 
-      {/* Winner badge - full width on mobile */}
+      {/* Winner badge */}
       {isComplete && winners.length > 0 && (
         <div className="badge badge-md sm:badge-lg gap-1 sm:gap-2 py-3 px-3 sm:py-5 sm:px-5 text-sm sm:text-lg animate-winner-header rounded-lg order-3 sm:order-none w-full sm:w-auto justify-center">
           <Swords size={14} className="sm:w-[18px] sm:h-[18px] text-amber-400" />

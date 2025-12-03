@@ -4,21 +4,28 @@ import { useRef, useEffect } from 'react';
 import { Player, getPlayerTotal } from '@/lib/game-state';
 import { Category, CATEGORIES, CATEGORY_INFO } from '@/lib/scoring';
 import ScoreCell from './ScoreCell';
-import { Swords, Crown } from 'lucide-react';
+import { Swords } from 'lucide-react';
+import DiceIcon from './DiceIcon';
+
+interface CelebratingCell {
+  playerId: string;
+  category: Category;
+}
 
 interface ScoreTableProps {
   players: Player[];
   currentPlayerIndex: number;
   onSetScore: (playerId: string, category: Category, score: number | null) => void;
   winners?: Player[];
+  celebratingCell?: CelebratingCell | null;
 }
 
 // Shared row height for synchronization (smaller on mobile)
 const ROW_HEIGHT = 'h-[44px] sm:h-[52px]';
-const HEADER_HEIGHT = 'h-[48px] sm:h-[56px]';
+const HEADER_HEIGHT = 'h-[48px] sm:h-[72px]'; // Mobile: simple text, Desktop: shields
 const FOOTER_HEIGHT = 'h-[52px] sm:h-[60px]';
 
-export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [] }: ScoreTableProps) {
+export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell }: ScoreTableProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isWinner = (playerId: string) => winners.some(w => w.id === playerId);
 
@@ -44,9 +51,19 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
       {/* Fixed Category Column */}
       <div className="flex-shrink-0 w-20 sm:w-36 bg-base-200 border-r border-base-300">
         {/* Header */}
-        <div className={`${HEADER_HEIGHT} flex items-center justify-center sm:justify-start px-2 sm:px-3 bg-base-300 font-[family-name:var(--font-cinzel)] text-primary text-base sm:text-lg font-semibold`}>
-          <Crown size={26} className="sm:hidden" />
-          <span className="hidden sm:inline">Category</span>
+        <div className={`${HEADER_HEIGHT} flex items-center justify-center px-2 sm:px-3 bg-base-300`}>
+          <div className="sm:hidden relative w-12 h-10">
+            <div className="absolute left-0 top-0 rotate-[-8deg]"><DiceIcon value={1} size={14} /></div>
+            <div className="absolute left-4 top-4 rotate-[10deg]"><DiceIcon value={2} size={15} /></div>
+            <div className="absolute left-[26px] top-0 rotate-[5deg]"><DiceIcon value={3} size={14} /></div>
+          </div>
+          <div className="hidden sm:block relative w-28 h-14">
+            <div className="absolute left-1 top-1 rotate-[-8deg]"><DiceIcon value={1} size={20} /></div>
+            <div className="absolute left-6 top-6 rotate-[12deg]"><DiceIcon value={2} size={22} /></div>
+            <div className="absolute left-[52px] top-0 rotate-[-3deg]"><DiceIcon value={3} size={21} /></div>
+            <div className="absolute left-[76px] top-5 rotate-[7deg]"><DiceIcon value={4} size={20} /></div>
+            <div className="absolute left-[42px] top-[38px] rotate-[-12deg]"><DiceIcon value={5} size={19} /></div>
+          </div>
         </div>
 
         {/* Category rows */}
@@ -79,7 +96,7 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
         <div ref={scrollContainerRef} className="overflow-x-auto overflow-y-clip scroll-smooth">
           <div className="min-w-max">
           {/* Header row */}
-          <div className={`${HEADER_HEIGHT} flex bg-base-300`}>
+          <div className={`${HEADER_HEIGHT} flex items-center bg-base-300`}>
             {players.map((player, index) => {
               const playerIsWinner = isWinner(player.id);
               const isCurrentPlayer = index === currentPlayerIndex && winners.length === 0;
@@ -87,21 +104,43 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                 <div
                   key={player.id}
                   data-player-index={index}
-                  className={`min-w-[80px] sm:min-w-[120px] md:min-w-[140px] flex items-center justify-center px-2 text-base sm:text-lg font-semibold transition-colors ${
-                    playerIsWinner
-                      ? 'animate-winner-column'
-                      : isCurrentPlayer
-                        ? 'animate-current-player-header bg-primary text-primary-content'
-                        : ''
-                  }`}
+                  className={`min-w-[80px] sm:min-w-[120px] md:min-w-[140px] h-full flex items-center justify-center
+                    ${isCurrentPlayer ? 'bg-primary text-primary-content' : ''}
+                    ${playerIsWinner ? 'animate-winner-column' : ''}
+                  `}
                 >
-                  <span className="inline-flex items-center gap-0.5 sm:gap-1">
-                    {playerIsWinner && <Swords size={14} className="sm:w-[18px] sm:h-[18px] text-amber-400" />}
-                    <span className={`truncate max-w-[60px] sm:max-w-none ${playerIsWinner ? 'text-amber-200' : ''}`}>
+                  {/* Mobile: Simple text only */}
+                  <span
+                    className={`sm:hidden truncate text-sm font-semibold font-[family-name:var(--font-cinzel)]
+                      ${playerIsWinner ? 'text-amber-200' : ''}
+                    `}
+                  >
+                    {player.name}
+                  </span>
+
+                  {/* Desktop: Shield headers with name on top, icon on bottom */}
+                  <div
+                    className={`shield-header
+                      ${playerIsWinner
+                        ? 'shield-header-active'
+                        : isCurrentPlayer
+                          ? 'shield-header-current'
+                          : 'shield-header-inactive'
+                      }`}
+                  >
+                    {/* Player name on top */}
+                    <span className={`shield-header-name font-[family-name:var(--font-cinzel)] ${
+                      playerIsWinner ? 'text-amber-200' : ''
+                    }`}>
                       {player.name}
                     </span>
-                    {playerIsWinner && <Swords size={14} className="sm:w-[18px] sm:h-[18px] text-amber-400" />}
-                  </span>
+                    {/* Sword icon on bottom for current player or winner */}
+                    <div className="shield-header-icon mt-1">
+                      {(isCurrentPlayer || playerIsWinner) && (
+                        <Swords size={16} />
+                      )}
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -133,6 +172,7 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                       onSetScore={(score) => onSetScore(player.id, category, score)}
                       isCurrentPlayer={isCurrentPlayer}
                       isWinner={playerIsWinner}
+                      isCelebrating={celebratingCell?.playerId === player.id && celebratingCell?.category === category}
                     />
                   </div>
                 );
@@ -145,15 +185,18 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
             {players.map((player, index) => {
               const playerIsWinner = isWinner(player.id);
               const isCurrentPlayer = index === currentPlayerIndex && winners.length === 0;
+              const isCelebrating = celebratingCell?.playerId === player.id;
               return (
                 <div
                   key={player.id}
                   className={`min-w-[80px] sm:min-w-[120px] md:min-w-[140px] flex items-center justify-center text-lg sm:text-xl font-bold transition-colors ${
                     playerIsWinner
                       ? 'animate-winner-column text-amber-300'
-                      : isCurrentPlayer
-                        ? 'animate-current-player-header bg-primary text-primary-content'
-                        : 'text-primary'
+                      : isCelebrating
+                        ? 'animate-total-triumph bg-primary text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]'
+                        : isCurrentPlayer
+                          ? 'bg-primary text-primary-content'
+                          : 'text-primary'
                   }`}
                 >
                   {getPlayerTotal(player)}

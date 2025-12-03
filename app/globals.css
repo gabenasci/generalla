@@ -440,3 +440,343 @@ html, body {
     animation: none;
   }
 }
+
+/* ===== SHIELD WALL SYSTEM ===== */
+
+/* Base shield shape - pointed bottom like a real shield */
+.shield {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 70px;
+  padding: 10px 12px 20px;
+  clip-path: polygon(
+    0% 0%,        /* top-left */
+    100% 0%,      /* top-right */
+    100% 65%,     /* right shoulder */
+    50% 100%,     /* bottom point */
+    0% 65%        /* left shoulder */
+  );
+  transition: all 0.3s ease;
+}
+
+/* Active shield - uses bg-primary colors (same as TOTAL cell) */
+.shield-active {
+  background: oklch(70% 0.15 85); /* --color-primary */
+  color: oklch(15% 0.02 85); /* --color-primary-content */
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6))
+          drop-shadow(0 0 25px rgba(255, 165, 0, 0.4));
+  animation: shield-blaze 2.5s ease-in-out infinite;
+}
+
+/* Inactive shield - battle-ready but dimmed */
+.shield-inactive {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 40, 50, 0.7) 0%,
+    rgba(30, 30, 40, 0.8) 100%
+  );
+  filter: drop-shadow(0 0 4px rgba(100, 100, 120, 0.3));
+  opacity: 0.8;
+}
+
+/* Shield internal structure */
+.shield-icon {
+  height: 18px;
+  margin-bottom: 2px;
+}
+
+.shield-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.1;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shield-active .shield-name {
+  color: oklch(15% 0.02 85); /* dark text on yellow bg */
+  text-shadow: none;
+}
+
+.shield-inactive .shield-name {
+  color: rgba(180, 180, 190, 0.9);
+}
+
+.shield-separator {
+  width: 70%;
+  height: 1px;
+  margin: 4px 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 0, 0.6),
+    transparent
+  );
+}
+
+.shield-score {
+  font-weight: 700;
+  line-height: 1;
+}
+
+.shield-active .shield-score {
+  font-size: 1.1rem;
+  color: oklch(15% 0.02 85); /* dark text on yellow bg */
+  text-shadow: none;
+}
+
+.shield-inactive .shield-score {
+  font-size: 0.95rem;
+  color: rgba(200, 170, 100, 0.9);
+}
+
+/* Shield blaze animation */
+@keyframes shield-blaze {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))
+            drop-shadow(0 0 20px rgba(255, 165, 0, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.7))
+            drop-shadow(0 0 35px rgba(255, 165, 0, 0.5));
+  }
+}
+
+/* ===== SHIELD TABLE HEADERS ===== */
+
+/* Shield shape for table column headers - pointed bottom */
+/* Hidden on mobile, only show on desktop (sm+) */
+.shield-header {
+  display: none; /* Hidden by default (mobile) */
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  max-width: 72px;
+  min-height: 56px;
+  max-height: 56px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  padding: 6px 4px 10px;
+  clip-path: polygon(
+    0% 0%,        /* top-left */
+    100% 0%,      /* top-right */
+    100% 65%,     /* right shoulder */
+    50% 100%,     /* bottom point */
+    0% 65%        /* left shoulder */
+  );
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .shield-header {
+    display: flex; /* Show on desktop */
+  }
+}
+
+@media (min-width: 768px) {
+  .shield-header {
+    min-width: 80px;
+    max-width: 80px;
+    min-height: 60px;
+    max-height: 60px;
+  }
+}
+
+/* Active shield header - uses bg-primary colors (same as TOTAL cell) */
+.shield-header-active {
+  background: oklch(70% 0.15 85); /* --color-primary */
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6))
+          drop-shadow(0 0 20px rgba(255, 165, 0, 0.4));
+  animation: shield-blaze 2.5s ease-in-out infinite;
+}
+
+.shield-header-active .shield-header-name {
+  color: oklch(15% 0.02 85); /* dark text on yellow bg */
+  text-shadow: none;
+}
+
+.shield-header-active .shield-header-icon {
+  color: oklch(15% 0.02 85); /* dark icon on yellow bg */
+}
+
+/* Current player shield - vibrant glow on gold bg */
+.shield-header-current {
+  background: oklch(85% 0.18 85);
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6))
+          drop-shadow(0 0 20px rgba(255, 165, 0, 0.4));
+  animation: shield-blaze 2.5s ease-in-out infinite;
+}
+
+.shield-header-current .shield-header-name {
+  color: oklch(25% 0.05 85);
+}
+
+.shield-header-current .shield-header-icon {
+  color: oklch(25% 0.05 85);
+}
+
+/* Inactive shield header - other players */
+.shield-header-inactive {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 40, 50, 0.6) 0%,
+    rgba(30, 30, 40, 0.7) 100%
+  );
+  filter: drop-shadow(0 0 3px rgba(80, 80, 100, 0.3));
+}
+
+.shield-header-inactive .shield-header-name {
+  color: rgba(160, 160, 175, 0.9);
+}
+
+/* Shield header internal elements */
+.shield-header-icon {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.375rem;
+}
+
+.shield-header-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Desktop: larger shield headers */
+@media (min-width: 640px) {
+  .shield-header {
+    padding: 10px 6px;
+  }
+
+  .shield-header-icon {
+    height: 18px;
+  }
+
+  .shield-header-name {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===== SCORE TRIUMPH ANIMATION ===== */
+/* Epic celebration when a score is entered - Odin's blessing */
+
+@keyframes score-triumph {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 0 rgba(255, 215, 0, 0.8),
+      inset 0 0 20px rgba(255, 215, 0, 0.4);
+    background: radial-gradient(circle at center, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+  }
+  15% {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 30px 10px rgba(255, 215, 0, 0.6),
+      0 0 60px 20px rgba(255, 165, 0, 0.3),
+      inset 0 0 30px rgba(255, 215, 0, 0.5);
+    background: radial-gradient(circle at center, rgba(255, 215, 0, 0.5) 0%, rgba(255, 165, 0, 0.2) 50%, transparent 70%);
+  }
+  30% {
+    transform: scale(1.02);
+  }
+  50%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 20px 5px rgba(255, 215, 0, 0.4),
+      0 0 40px 10px rgba(255, 165, 0, 0.2),
+      inset 0 0 25px rgba(255, 215, 0, 0.3);
+    background: radial-gradient(circle at center, rgba(255, 215, 0, 0.35) 0%, rgba(255, 165, 0, 0.15) 50%, transparent 70%);
+  }
+}
+
+@keyframes triumph-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+    border-color: rgba(255, 215, 0, 0.8);
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+    border-color: rgba(255, 165, 0, 0);
+  }
+}
+
+.animate-score-triumph {
+  position: relative;
+  animation: score-triumph 1.2s ease-out forwards;
+  z-index: 10;
+}
+
+.animate-score-triumph::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid rgba(255, 215, 0, 0.8);
+  border-radius: 8px;
+  animation: triumph-ring 0.8s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ===== SHIELD CELEBRATION ANIMATION ===== */
+/* Epic celebration effect for mobile shields when scoring */
+
+@keyframes shield-triumph {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))
+            drop-shadow(0 0 20px rgba(255, 165, 0, 0.3));
+  }
+  15% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9))
+            drop-shadow(0 0 50px rgba(255, 165, 0, 0.6))
+            drop-shadow(0 0 75px rgba(255, 69, 0, 0.3));
+  }
+  30% {
+    transform: scale(1.04);
+  }
+  50%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 18px rgba(255, 215, 0, 0.7))
+            drop-shadow(0 0 35px rgba(255, 165, 0, 0.5));
+  }
+}
+
+.shield-celebrating {
+  animation: shield-triumph 1.2s ease-out forwards !important;
+}
+
+/* ===== TOTAL CELL TRIUMPH ANIMATION ===== */
+/* One-shot glow for TOTAL cell during celebration (not looping) */
+
+@keyframes total-triumph {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+  }
+  20% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-total-triumph {
+  animation: total-triumph 0.6s ease-out forwards;
+}
