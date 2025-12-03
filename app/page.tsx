@@ -82,7 +82,7 @@ export default function Home() {
               Generalla
             </h1>
             <p className="text-base xs:text-lg sm:text-xl md:text-2xl text-base-content/70 max-w-sm sm:max-w-md mx-auto font-[family-name:var(--font-cinzel)] tracking-wide mb-8">
-              Roll the dice, claim your glory, enter Valhalla
+              Roll the dice, claim your glory, <span className="text-primary">enter Valhalla</span>
             </p>
 
             {/* Buttons / Setup inside the frame */}
