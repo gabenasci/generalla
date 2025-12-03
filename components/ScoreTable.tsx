@@ -74,7 +74,9 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
               index % 2 === 0 ? 'bg-base-200' : 'bg-base-200/50'
             }`}
           >
-            <span className="hidden sm:inline">{CATEGORY_INFO[category].displayName}</span>
+            <span className="hidden sm:inline">
+              {category === 'generala' ? 'Generalla' : CATEGORY_INFO[category].displayName}
+            </span>
             <span className="sm:hidden">{CATEGORY_INFO[category].shortName || CATEGORY_INFO[category].displayName}</span>
             {CATEGORY_INFO[category].hasServido && (
               <span className="text-xs sm:text-sm text-base-content/50 ml-0.5 sm:ml-1">*</span>
