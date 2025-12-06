@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { loadPreviousPlayers } from '@/lib/storage';
+import { Shield } from 'lucide-react';
 
 interface PlayerSetupProps {
   onStartGame: (playerNames: string[]) => void;
@@ -9,6 +11,18 @@ interface PlayerSetupProps {
 export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
   const [players, setPlayers] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [previousPlayers, setPreviousPlayers] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    const saved = loadPreviousPlayers();
+    setPreviousPlayers(saved);
+  }, []);
+
+  const handleUsePreviousPlayers = () => {
+    if (previousPlayers) {
+      setPlayers(previousPlayers);
+    }
+  };
 
   const addPlayer = () => {
     const name = inputValue.trim();
@@ -37,6 +51,16 @@ export default function PlayerSetup({ onStartGame }: PlayerSetupProps) {
         <h2 className="card-title text-primary font-[family-name:var(--font-cinzel)] text-xl sm:text-2xl justify-center">
           Assemble Your Warriors
         </h2>
+
+        {previousPlayers && previousPlayers.length > 0 && players.length === 0 && (
+          <button
+            className="btn btn-secondary btn-md w-full gap-2 font-[family-name:var(--font-cinzel)]"
+            onClick={handleUsePreviousPlayers}
+          >
+            <Shield className="w-4 h-4" />
+            Use Previous Warriors
+          </button>
+        )}
 
         <div className="form-control">
           <div className="join w-full">

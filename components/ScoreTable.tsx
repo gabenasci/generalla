@@ -5,7 +5,7 @@ import { Player, getPlayerTotal } from '@/lib/game-state';
 import { Category, CATEGORIES, CATEGORY_INFO } from '@/lib/scoring';
 import ScoreCell from './ScoreCell';
 import CategoryCell from './CategoryCell';
-import { Swords } from 'lucide-react';
+import { Swords, UserPlus } from 'lucide-react';
 import DiceIcon from './DiceIcon';
 
 interface CelebratingCell {
@@ -19,6 +19,8 @@ interface ScoreTableProps {
   onSetScore: (playerId: string, category: Category, score: number | null) => void;
   winners?: Player[];
   celebratingCell?: CelebratingCell | null;
+  onAddPlayer?: () => void;
+  gameComplete?: boolean;
 }
 
 // Shared row height for synchronization (smaller on mobile)
@@ -26,7 +28,7 @@ const ROW_HEIGHT = 'h-[44px] sm:h-[52px]';
 const HEADER_HEIGHT = 'h-[48px] sm:h-[72px]'; // Mobile: simple text, Desktop: shields
 const FOOTER_HEIGHT = 'h-[52px] sm:h-[60px]';
 
-export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell }: ScoreTableProps) {
+export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell, onAddPlayer, gameComplete }: ScoreTableProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isWinner = (playerId: string) => winners.some(w => w.id === playerId);
 
@@ -178,6 +180,18 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                 </div>
               );
             })}
+            {/* Add Player column */}
+            {onAddPlayer && !gameComplete && (
+              <div className="min-w-[80px] sm:min-w-[120px] md:min-w-[140px] h-full flex items-center justify-center">
+                <button
+                  onClick={onAddPlayer}
+                  className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-base-100/50 hover:bg-primary/20 border-2 border-dashed border-base-content/20 hover:border-primary/50 text-base-content/40 hover:text-primary transition-all"
+                  aria-label="Add player"
+                >
+                  <UserPlus className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Score rows */}
@@ -211,6 +225,10 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                   </div>
                 );
               })}
+              {/* Add Player column placeholder */}
+              {onAddPlayer && !gameComplete && (
+                <div className="min-w-[80px] sm:min-w-[120px] md:min-w-[140px]" />
+              )}
             </div>
           ))}
 
@@ -237,6 +255,10 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                 </div>
               );
             })}
+            {/* Add Player column placeholder */}
+            {onAddPlayer && !gameComplete && (
+              <div className="min-w-[80px] sm:min-w-[120px] md:min-w-[140px]" />
+            )}
           </div>
         </div>
       </div>

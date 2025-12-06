@@ -3,15 +3,16 @@
 import { useEffect } from 'react';
 import { Player, getPlayerTotal } from '@/lib/game-state';
 import { startVictoryConfetti, stopVictoryConfetti } from '@/lib/confetti';
-import { Swords, Crown, Skull } from 'lucide-react';
+import { Swords, Crown, Skull, Shield } from 'lucide-react';
 
 interface VictoryDialogProps {
   winners: Player[];
+  onRematch: () => void;
   onNewGame: () => void;
   onDismiss: () => void;
 }
 
-export default function VictoryDialog({ winners, onNewGame, onDismiss }: VictoryDialogProps) {
+export default function VictoryDialog({ winners, onRematch, onNewGame, onDismiss }: VictoryDialogProps) {
   const isTie = winners.length > 1;
   const winningScore = getPlayerTotal(winners[0]);
 
@@ -96,15 +97,25 @@ export default function VictoryDialog({ winners, onNewGame, onDismiss }: Victory
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col gap-1 md:gap-2 items-center">
-            <button
-              className="btn btn-primary btn-md md:btn-lg gap-2 font-[family-name:var(--font-cinzel)] text-base md:text-lg px-6 md:px-8"
-              onClick={onNewGame}
-            >
-              <Swords className="w-4 h-4 md:w-5 md:h-5" />
-              Begin New Battle
-              <Swords className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
+          <div className="flex flex-col gap-2 md:gap-3 items-center">
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full sm:w-auto">
+              <button
+                className="btn btn-primary btn-md md:btn-lg gap-2 font-[family-name:var(--font-cinzel)] text-base md:text-lg px-6 md:px-8"
+                onClick={onRematch}
+              >
+                <Swords className="w-4 h-4 md:w-5 md:h-5" />
+                Rematch
+                <Swords className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+
+              <button
+                className="btn btn-ghost btn-md md:btn-lg gap-2 font-[family-name:var(--font-cinzel)] text-base md:text-lg border-primary/30"
+                onClick={onNewGame}
+              >
+                <Shield className="w-4 h-4 md:w-5 md:h-5" />
+                New Warriors
+              </button>
+            </div>
 
             <button
               className="text-sm text-base-content/40 hover:text-base-content/60 transition-colors mt-1 md:mt-2"

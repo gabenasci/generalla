@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Swords, Shield, Flame, Axe, Crown, Skull } from 'lucide-react';
 import PlayerSetup from '@/components/PlayerSetup';
 import { createGame } from '@/lib/game-state';
-import { saveGame, loadGame, clearGame } from '@/lib/storage';
+import { saveGame, loadGame, clearGame, savePreviousPlayers } from '@/lib/storage';
 
 export default function Home() {
   const router = useRouter();
@@ -18,6 +18,7 @@ export default function Home() {
   }, []);
 
   const handleStartGame = (playerNames: string[]) => {
+    savePreviousPlayers(playerNames);
     const game = createGame(playerNames);
     saveGame(game);
     router.push('/game');
@@ -28,6 +29,10 @@ export default function Home() {
   };
 
   const handleNewGame = () => {
+    const existingGame = loadGame();
+    if (existingGame) {
+      savePreviousPlayers(existingGame.players.map(p => p.name));
+    }
     clearGame();
     setHasExistingGame(false);
     setShowSetup(true);

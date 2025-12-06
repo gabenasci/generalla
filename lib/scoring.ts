@@ -95,9 +95,9 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     name: 'generala',
     displayName: 'Generala',
     shortName: 'Gen.',
-    validScores: [0, 50],
-    maxScore: 50,
-    hasServido: false,
+    validScores: [0, 50, 55],
+    maxScore: 55,
+    hasServido: true,
     exampleHand: [5, 5, 5, 5, 5],
   },
 };

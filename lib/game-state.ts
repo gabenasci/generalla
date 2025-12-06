@@ -94,3 +94,29 @@ export function advancePlayer(game: GameState): GameState {
     currentPlayerIndex: nextIndex,
   };
 }
+
+export function gameHasAnyScores(game: GameState): boolean {
+  return game.players.some(player =>
+    CATEGORIES.some(cat => player.scores[cat] !== null)
+  );
+}
+
+export function addPlayerToGame(game: GameState, playerName: string): GameState {
+  const newPlayer = createPlayer(playerName);
+  return {
+    ...game,
+    players: [...game.players, newPlayer],
+  };
+}
+
+export function resetGameScores(game: GameState): GameState {
+  return {
+    ...game,
+    players: game.players.map(player => ({
+      ...player,
+      scores: createEmptyScores(),
+    })),
+    currentPlayerIndex: 0,
+    isComplete: false,
+  };
+}

@@ -5,14 +5,16 @@ import { useRouter } from 'next/navigation';
 import GameHeader from '@/components/GameHeader';
 import ScoreTable from '@/components/ScoreTable';
 import VictoryDialog from '@/components/VictoryDialog';
-import { GameState, setScore, getWinners } from '@/lib/game-state';
+import AddPlayerDialog from '@/components/AddPlayerDialog';
+import ConfirmResetDialog from '@/components/ConfirmResetDialog';
+import { GameState, setScore, getWinners, createGame, gameHasAnyScores, addPlayerToGame, resetGameScores } from '@/lib/game-state';
 import { Category } from '@/lib/scoring';
 
 interface CelebratingCell {
   playerId: string;
   category: Category;
 }
-import { loadGame, saveGame, clearGame } from '@/lib/storage';
+import { loadGame, saveGame, clearGame, savePreviousPlayers } from '@/lib/storage';
 
 export default function GamePage() {
   const router = useRouter();
@@ -22,6 +24,9 @@ export default function GamePage() {
   const [flashNewGame, setFlashNewGame] = useState(false);
   const [showVictoryDialog, setShowVictoryDialog] = useState(true);
   const [celebratingCell, setCelebratingCell] = useState<CelebratingCell | null>(null);
+  const [showAddPlayerDialog, setShowAddPlayerDialog] = useState(false);
+  const [showConfirmResetDialog, setShowConfirmResetDialog] = useState(false);
+  const [pendingPlayerName, setPendingPlayerName] = useState('');
 
   useEffect(() => {
     let savedGame = loadGame();
@@ -101,6 +106,18 @@ export default function GamePage() {
     router.push('/');
   };
 
+  const handleRematch = () => {
+    if (!game) return;
+    const playerNames = game.players.map(p => p.name);
+    savePreviousPlayers(playerNames);
+    const newGame = createGame(playerNames);
+    saveGame(newGame);
+    setGame(newGame);
+    setPreviousGame(null);
+    setShowVictoryDialog(false);
+    setCelebratingCell(null);
+  };
+
   const handleUndo = () => {
     if (!previousGame) return;
     setGame(previousGame);
@@ -110,6 +127,37 @@ export default function GamePage() {
 
   const handleDismissVictory = () => {
     setShowVictoryDialog(false);
+  };
+
+  const handleAddPlayerRequest = () => {
+    setShowAddPlayerDialog(true);
+  };
+
+  const handleAddPlayer = (name: string) => {
+    if (!game) return;
+
+    if (gameHasAnyScores(game)) {
+      setPendingPlayerName(name);
+      setShowAddPlayerDialog(false);
+      setShowConfirmResetDialog(true);
+    } else {
+      const updatedGame = addPlayerToGame(game, name);
+      setGame(updatedGame);
+      saveGame(updatedGame);
+      setShowAddPlayerDialog(false);
+    }
+  };
+
+  const handleConfirmReset = () => {
+    if (!game) return;
+
+    let updatedGame = resetGameScores(game);
+    updatedGame = addPlayerToGame(updatedGame, pendingPlayerName);
+    setGame(updatedGame);
+    saveGame(updatedGame);
+    setPreviousGame(null);
+    setShowConfirmResetDialog(false);
+    setPendingPlayerName('');
   };
 
   if (loading || !game) {
@@ -159,8 +207,30 @@ export default function GamePage() {
       {game.isComplete && winners.length > 0 && showVictoryDialog && (
         <VictoryDialog
           winners={winners}
+          onRematch={handleRematch}
           onNewGame={handleNewGame}
           onDismiss={handleDismissVictory}
+        />
+      )}
+
+      {/* Add Player Dialog */}
+      {showAddPlayerDialog && (
+        <AddPlayerDialog
+          existingNames={game.players.map(p => p.name)}
+          onAddPlayer={handleAddPlayer}
+          onClose={() => setShowAddPlayerDialog(false)}
+        />
+      )}
+
+      {/* Confirm Reset Dialog */}
+      {showConfirmResetDialog && (
+        <ConfirmResetDialog
+          playerName={pendingPlayerName}
+          onConfirm={handleConfirmReset}
+          onCancel={() => {
+            setShowConfirmResetDialog(false);
+            setPendingPlayerName('');
+          }}
         />
       )}
 
@@ -171,6 +241,8 @@ export default function GamePage() {
           onSetScore={handleSetScore}
           winners={winners}
           celebratingCell={celebratingCell}
+          onAddPlayer={handleAddPlayerRequest}
+          gameComplete={game.isComplete}
         />
       </main>
     </div>
