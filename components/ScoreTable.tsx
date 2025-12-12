@@ -26,7 +26,7 @@ interface ScoreTableProps {
 
 // Shared row height for synchronization (smaller on mobile)
 const ROW_HEIGHT = 'h-[44px] sm:h-[52px]';
-const HEADER_HEIGHT = 'h-[48px] sm:h-[72px]'; // Mobile: simple text, Desktop: shields
+const HEADER_HEIGHT = 'h-[48px] sm:h-[56px]';
 const FOOTER_HEIGHT = 'h-[52px] sm:h-[60px]';
 
 export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell, onAddPlayer, gameComplete, doubleGeneralaUnlocked = false }: ScoreTableProps) {
@@ -149,38 +149,18 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                     ${playerIsWinner ? 'animate-winner-column' : ''}
                   `}
                 >
-                  {/* Mobile: Simple text only */}
+                  {/* Simple text for all screen sizes */}
                   <span
-                    className={`sm:hidden truncate text-sm font-semibold font-[family-name:var(--font-cinzel)]
+                    className={`truncate text-sm sm:text-base font-semibold font-[family-name:var(--font-cinzel)]
                       ${playerIsWinner ? 'text-amber-200' : ''}
                     `}
                   >
                     {player.name}
                   </span>
-
-                  {/* Desktop: Shield headers with name on top, icon on bottom */}
-                  <div
-                    className={`shield-header
-                      ${playerIsWinner
-                        ? 'shield-header-active'
-                        : isCurrentPlayer
-                          ? 'shield-header-current'
-                          : 'shield-header-inactive'
-                      }`}
-                  >
-                    {/* Player name on top */}
-                    <span className={`shield-header-name font-[family-name:var(--font-cinzel)] ${
-                      playerIsWinner ? 'text-amber-200' : ''
-                    }`}>
-                      {player.name}
-                    </span>
-                    {/* Sword icon on bottom for current player or winner */}
-                    <div className="shield-header-icon mt-1">
-                      {(isCurrentPlayer || playerIsWinner) && (
-                        <Swords size={16} />
-                      )}
-                    </div>
-                  </div>
+                  {/* Sword icon for current player or winner */}
+                  {(isCurrentPlayer || playerIsWinner) && (
+                    <Swords size={14} className="ml-1 sm:size-4" />
+                  )}
                 </div>
               );
             })}
