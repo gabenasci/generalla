@@ -27,20 +27,30 @@ export default function GameHeader({
   celebratingPlayerId,
 }: GameHeaderProps) {
 
-  // Mobile: Shield scoreboard (name + score for each player)
-  const renderMobileScoreboard = () => {
+  // Shield scoreboard (name + score for each player, sorted by score)
+  const renderScoreboard = () => {
+    // Sort players by score (highest first), using original index as tie-breaker
+    const sortedPlayers = players
+      .map((player, originalIndex) => ({ player, originalIndex }))
+      .sort((a, b) => {
+        const scoreA = getPlayerTotal(a.player);
+        const scoreB = getPlayerTotal(b.player);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        return a.originalIndex - b.originalIndex;
+      });
+
     return (
-      <div className="sm:hidden w-full order-3">
+      <div className="w-full order-3">
         <div className="flex flex-wrap justify-center gap-2 py-2">
-          {players.map((player, index) => {
-            const isCurrentTurn = index === currentPlayerIndex && winners.length === 0;
+          {sortedPlayers.map(({ player, originalIndex }) => {
+            const isCurrentTurn = originalIndex === currentPlayerIndex && winners.length === 0;
             const isCelebrating = player.id === celebratingPlayerId;
             const total = getPlayerTotal(player);
 
             return (
               <div
                 key={player.id}
-                className={`shield ${
+                className={`shield w-[30%] max-w-[100px] shrink-0 sm:w-auto sm:max-w-none ${
                   isCelebrating
                     ? 'shield-active shield-celebrating'
                     : isCurrentTurn
@@ -98,8 +108,8 @@ export default function GameHeader({
         </button>
       </div>
 
-      {/* Mobile: Shield scoreboard above table */}
-      {!isComplete && renderMobileScoreboard()}
+      {/* Shield scoreboard above table */}
+      {!isComplete && renderScoreboard()}
 
       {/* Winner badge */}
       {isComplete && winners.length > 0 && (
