@@ -180,6 +180,13 @@ export default function GamePage() {
 
   const winners = getWinners(game);
 
+  // Hide add player column after 2 full rounds (each player scored twice)
+  const totalScoresEntered = game.players.reduce(
+    (sum, player) => sum + Object.values(player.scores).filter(s => s !== null).length,
+    0
+  );
+  const canAddPlayer = totalScoresEntered < game.players.length * 2;
+
   return (
     <div className="min-h-screen flex flex-col bg-base-100 relative overflow-hidden">
       {/* Background Flames */}
@@ -259,7 +266,7 @@ export default function GamePage() {
           onSetScore={handleSetScore}
           winners={winners}
           celebratingCell={celebratingCell}
-          onAddPlayer={handleAddPlayerRequest}
+          onAddPlayer={canAddPlayer ? handleAddPlayerRequest : undefined}
           gameComplete={game.isComplete}
           doubleGeneralaUnlocked={game.doubleGeneralaUnlocked}
         />
