@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { Player, getPlayerTotal } from '@/lib/game-state';
-import { Category, CATEGORIES, CATEGORY_INFO } from '@/lib/scoring';
+import { Player, getPlayerTotal, canPlayerScoreDoubleGenerala } from '@/lib/game-state';
+import { Category, CATEGORIES, BASE_CATEGORIES, CATEGORY_INFO } from '@/lib/scoring';
 import ScoreCell from './ScoreCell';
 import CategoryCell from './CategoryCell';
 import { Swords, UserPlus } from 'lucide-react';
@@ -21,6 +21,7 @@ interface ScoreTableProps {
   celebratingCell?: CelebratingCell | null;
   onAddPlayer?: () => void;
   gameComplete?: boolean;
+  doubleGeneralaUnlocked?: boolean;
 }
 
 // Shared row height for synchronization (smaller on mobile)
@@ -28,9 +29,12 @@ const ROW_HEIGHT = 'h-[44px] sm:h-[52px]';
 const HEADER_HEIGHT = 'h-[48px] sm:h-[72px]'; // Mobile: simple text, Desktop: shields
 const FOOTER_HEIGHT = 'h-[52px] sm:h-[60px]';
 
-export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell, onAddPlayer, gameComplete }: ScoreTableProps) {
+export default function ScoreTable({ players, currentPlayerIndex, onSetScore, winners = [], celebratingCell, onAddPlayer, gameComplete, doubleGeneralaUnlocked = false }: ScoreTableProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isWinner = (playerId: string) => winners.some(w => w.id === playerId);
+
+  // Show doubleGenerala only when unlocked
+  const visibleCategories = doubleGeneralaUnlocked ? CATEGORIES : BASE_CATEGORIES;
 
   // State for showing category example hands
   const [activeExampleCategory, setActiveExampleCategory] = useState<Category | null>(null);
@@ -103,12 +107,12 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
         </div>
 
         {/* Category rows */}
-        {CATEGORIES.map((category, index) => (
+        {visibleCategories.map((category, index) => (
           <div
             key={category}
             className={`${ROW_HEIGHT} flex items-center px-2 sm:px-3 text-sm sm:text-base font-medium ${
               index % 2 === 0 ? 'bg-base-200' : 'bg-base-200/50'
-            }`}
+            } ${category === 'doubleGenerala' ? 'animate-row-slide-in' : ''}`}
           >
             <CategoryCell
               category={category}
@@ -195,14 +199,15 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
           </div>
 
           {/* Score rows */}
-          {CATEGORIES.map((category, rowIndex) => (
+          {visibleCategories.map((category, rowIndex) => (
             <div
               key={category}
-              className={`${ROW_HEIGHT} flex ${rowIndex % 2 === 0 ? 'bg-base-200' : 'bg-base-200/50'}`}
+              className={`${ROW_HEIGHT} flex ${rowIndex % 2 === 0 ? 'bg-base-200' : 'bg-base-200/50'} ${category === 'doubleGenerala' ? 'animate-row-slide-in' : ''}`}
             >
               {players.map((player, index) => {
                 const playerIsWinner = isWinner(player.id);
                 const isCurrentPlayer = index === currentPlayerIndex && winners.length === 0;
+                const isEligibleForDoubleGenerala = category === 'doubleGenerala' ? canPlayerScoreDoubleGenerala(player) : true;
                 return (
                   <div
                     key={player.id}
@@ -221,6 +226,7 @@ export default function ScoreTable({ players, currentPlayerIndex, onSetScore, wi
                       isCurrentPlayer={isCurrentPlayer}
                       isWinner={playerIsWinner}
                       isCelebrating={celebratingCell?.playerId === player.id && celebratingCell?.category === category}
+                      isDisabled={!isEligibleForDoubleGenerala}
                     />
                   </div>
                 );

@@ -1,4 +1,4 @@
-import { Category, CATEGORIES, calculateTotal } from './scoring';
+import { Category, CATEGORIES, BASE_CATEGORIES, calculateTotal } from './scoring';
 
 export interface Player {
   id: string;
@@ -12,6 +12,7 @@ export interface GameState {
   currentPlayerIndex: number;
   isComplete: boolean;
   createdAt: number;
+  doubleGeneralaUnlocked: boolean;
 }
 
 export function createEmptyScores(): Record<Category, number | null> {
@@ -36,6 +37,7 @@ export function createGame(playerNames: string[]): GameState {
     currentPlayerIndex: 0,
     isComplete: false,
     createdAt: Date.now(),
+    doubleGeneralaUnlocked: false,
   };
 }
 
@@ -56,19 +58,43 @@ export function setScore(
     };
   });
 
-  const isComplete = checkGameComplete(updatedPlayers);
+  // Check if double generalla should be unlocked (any player scores generala > 0)
+  const doubleGeneralaUnlocked = game.doubleGeneralaUnlocked ||
+    updatedPlayers.some(player => {
+      const generalaScore = player.scores['generala'];
+      return generalaScore !== null && generalaScore > 0;
+    });
+
+  const isComplete = checkGameComplete(updatedPlayers, doubleGeneralaUnlocked);
 
   return {
     ...game,
     players: updatedPlayers,
     isComplete,
+    doubleGeneralaUnlocked,
   };
 }
 
-export function checkGameComplete(players: Player[]): boolean {
-  return players.every(player =>
-    CATEGORIES.every(cat => player.scores[cat] !== null)
+export function checkGameComplete(players: Player[], doubleGeneralaUnlocked: boolean = false): boolean {
+  // Base categories must always be completed
+  const baseComplete = players.every(player =>
+    BASE_CATEGORIES.every(cat => player.scores[cat] !== null)
   );
+
+  if (!baseComplete) return false;
+
+  // If double generalla is unlocked, it must also be completed for all players
+  if (doubleGeneralaUnlocked) {
+    return players.every(player => player.scores['doubleGenerala'] !== null);
+  }
+
+  return true;
+}
+
+// Check if a player can score double generalla (must have scored generala > 0)
+export function canPlayerScoreDoubleGenerala(player: Player): boolean {
+  const generalaScore = player.scores['generala'];
+  return generalaScore !== null && generalaScore > 0;
 }
 
 export function getPlayerTotal(player: Player): number {
@@ -118,5 +144,6 @@ export function resetGameScores(game: GameState): GameState {
     })),
     currentPlayerIndex: 0,
     isComplete: false,
+    doubleGeneralaUnlocked: false,
   };
 }

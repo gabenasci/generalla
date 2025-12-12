@@ -1,5 +1,11 @@
 export const CATEGORIES = [
   'ones', 'twos', 'threes', 'fours', 'fives', 'sixes',
+  'escalera', 'full', 'poker', 'generala', 'doubleGenerala'
+] as const;
+
+// Categories required for game completion (excludes conditional categories)
+export const BASE_CATEGORIES = [
+  'ones', 'twos', 'threes', 'fours', 'fives', 'sixes',
   'escalera', 'full', 'poker', 'generala'
 ] as const;
 
@@ -100,6 +106,15 @@ export const CATEGORY_INFO: Record<Category, CategoryInfo> = {
     hasServido: true,
     exampleHand: [5, 5, 5, 5, 5],
   },
+  doubleGenerala: {
+    name: 'doubleGenerala',
+    displayName: 'Double Generalla',
+    shortName: '2x Gen.',
+    validScores: [0, 100, 110],
+    maxScore: 110,
+    hasServido: true,
+    exampleHand: [6, 6, 6, 6, 6],
+  },
 };
 
 export function isValidScore(category: Category, score: number): boolean {
@@ -115,6 +130,8 @@ export function getServidoScore(category: Category): number | null {
 export function getNormalScore(category: Category): number | null {
   const info = CATEGORY_INFO[category];
   if (!info.hasServido) return null;
+  // Double Generalla has +10 servido bonus instead of +5
+  if (category === 'doubleGenerala') return info.maxScore - 10;
   return info.maxScore - 5;
 }
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import GameHeader from '@/components/GameHeader';
 import ScoreTable from '@/components/ScoreTable';
 import VictoryDialog from '@/components/VictoryDialog';
+import DoubleGeneralaUnlockModal from '@/components/DoubleGeneralaUnlockModal';
 import AddPlayerDialog from '@/components/AddPlayerDialog';
 import ConfirmResetDialog from '@/components/ConfirmResetDialog';
 import { GameState, setScore, getWinners, createGame, gameHasAnyScores, addPlayerToGame, resetGameScores } from '@/lib/game-state';
@@ -27,6 +28,8 @@ export default function GamePage() {
   const [showAddPlayerDialog, setShowAddPlayerDialog] = useState(false);
   const [showConfirmResetDialog, setShowConfirmResetDialog] = useState(false);
   const [pendingPlayerName, setPendingPlayerName] = useState('');
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [unlockingPlayerName, setUnlockingPlayerName] = useState('');
 
   useEffect(() => {
     let savedGame = loadGame();
@@ -76,6 +79,13 @@ export default function GamePage() {
     // Update score immediately (player sees their score right away)
     setGame(updatedGame);
     saveGame(updatedGame);
+
+    // Show unlock modal when double generalla is unlocked
+    if (updatedGame.doubleGeneralaUnlocked && !game.doubleGeneralaUnlocked) {
+      const player = game.players.find(p => p.id === playerId);
+      setUnlockingPlayerName(player?.name || 'A warrior');
+      setShowUnlockModal(true);
+    }
 
     // Show victory dialog when game completes
     if (updatedGame.isComplete && !game.isComplete) {
@@ -213,6 +223,14 @@ export default function GamePage() {
         />
       )}
 
+      {/* Double Generalla Unlock Modal */}
+      {showUnlockModal && (
+        <DoubleGeneralaUnlockModal
+          playerName={unlockingPlayerName}
+          onDismiss={() => setShowUnlockModal(false)}
+        />
+      )}
+
       {/* Add Player Dialog */}
       {showAddPlayerDialog && (
         <AddPlayerDialog
@@ -243,6 +261,7 @@ export default function GamePage() {
           celebratingCell={celebratingCell}
           onAddPlayer={handleAddPlayerRequest}
           gameComplete={game.isComplete}
+          doubleGeneralaUnlocked={game.doubleGeneralaUnlocked}
         />
       </main>
     </div>

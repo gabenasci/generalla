@@ -60,3 +60,50 @@ export function stopVictoryConfetti() {
   }
   confetti.reset();
 }
+
+/**
+ * Fires a single dramatic confetti burst for double generalla unlock
+ */
+export function fireUnlockConfetti() {
+  // Epic center burst
+  confetti({
+    particleCount: 100,
+    spread: 100,
+    angle: 90,
+    origin: { x: 0.5, y: 0.4 },
+    colors: VICTORY_COLORS,
+    startVelocity: 55,
+    gravity: 1.2,
+    scalar: 1.2,
+    ticks: 100,
+    decay: 0.9,
+  });
+
+  // Side bursts with slight delay
+  setTimeout(() => {
+    confetti({
+      particleCount: 40,
+      spread: 60,
+      angle: 60,
+      origin: { x: 0.2, y: 0.5 },
+      colors: VICTORY_COLORS,
+      startVelocity: 45,
+      gravity: 1.5,
+      scalar: 1,
+      ticks: 80,
+      decay: 0.9,
+    });
+    confetti({
+      particleCount: 40,
+      spread: 60,
+      angle: 120,
+      origin: { x: 0.8, y: 0.5 },
+      colors: VICTORY_COLORS,
+      startVelocity: 45,
+      gravity: 1.5,
+      scalar: 1,
+      ticks: 80,
+      decay: 0.9,
+    });
+  }, 150);
+}

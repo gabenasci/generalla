@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Category, CATEGORY_INFO } from '@/lib/scoring';
+import { Lock } from 'lucide-react';
 
 interface ScoreCellProps {
   category: Category;
@@ -11,6 +12,7 @@ interface ScoreCellProps {
   isCurrentPlayer?: boolean;
   isWinner?: boolean;
   isCelebrating?: boolean;
+  isDisabled?: boolean;  // For conditional categories like double generalla
 }
 
 interface DropdownPosition {
@@ -28,6 +30,7 @@ export default function ScoreCell({
   isCurrentPlayer = false,
   isWinner = false,
   isCelebrating = false,
+  isDisabled = false,
 }: ScoreCellProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLUListElement>(null);
@@ -112,6 +115,17 @@ export default function ScoreCell({
 
   if (disabled) {
     return <div className={`text-center text-base-content/30 ${cellBg}`}>-</div>;
+  }
+
+  // Show lock icon for ineligible players (e.g., double generalla requires regular generalla > 0)
+  if (isDisabled) {
+    return (
+      <div className={`text-center p-1 sm:p-1.5 w-full ${cellBg}`}>
+        <div className="flex items-center justify-center min-h-[36px] sm:min-h-[44px]">
+          <Lock className="w-4 h-4 text-base-content/30" />
+        </div>
+      </div>
+    );
   }
 
   const hasScore = score !== null;
